@@ -31,6 +31,11 @@ bot.on('message', async message => {
     var replyToPerson = true;
     var reactions = null;
 
+    if (message.content === '!about') {
+
+        reply = "This bot is maintained by Plip. If you'd like to add some funtionality then drop Plip a DM or submit your own code at https://github.com/halfacandan/4EE-FAA";
+    }
+
     if (message.content === '!guildwars' || message.content === '!gw') {
         
         let channelOnGwDefence = await helpers.getChannelIdAsync(message.guild, "on_gw_defence");
@@ -49,7 +54,8 @@ bot.on('message', async message => {
 
     if (message.content === '!help') {       
 
-        reply = "**!guildwars** (or **!gw**) - Explain Guild Wars scoring\n" +
+        reply = "**!about** - Info on how to add new functionality to 4EE-FAH\n" +
+                "**!guildwars** (or **!gw**) - Explain Guild Wars scoring\n" +
                 "**!honour** (or **!honor**) - Display today's honour recipient\n" +
                 "**!honourweekly** (or **!honorweekly**) - Displays the current week's honour recipients by day\n" +
                 "**!members** - Lists the Guild members GoW account names\n" +
