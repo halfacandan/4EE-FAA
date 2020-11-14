@@ -41,7 +41,7 @@ module.exports = {
         return message;
     },
     TaskPoll: async function(){
-        return "<@&304714829032325120>Poll for next week: Which Epic task should we try to finish first?";
+        return "<@&304714829032325120> Poll for next week: Which Epic task should we try to finish first?";
     },
     TaskPollReactions: async function(){
         return Array(
