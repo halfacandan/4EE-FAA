@@ -1,4 +1,21 @@
 module.exports = {
+    ParseMessage: function (message){
+        const regexp = /!([a-z]+)|(?:![a-z]+)?(?:\s((?:"[^"]+"|[^\s]+)))/g;
+    
+        const parsedString = [...message.matchAll(regexp)];
+        let command = typeof(parsedString[0]) === "undefined" ? null : parsedString[0][0].toLowerCase();
+        let arguments = parsedString
+            .map(function(groups){
+                let argument = typeof(groups[2]) !== "undefined"  ?groups[2].replace(/"/g,"").trim() : null;
+                return argument;  
+            })
+            .filter(argument => argument != null &&  argument.length > 0);
+      
+        return {
+            "Command": command,
+            "Arguments": arguments
+        };
+    },    
     getEmojiCodeAsync: async function (bot, emojiShortcode){
         // https://discordjs.guide/popular-topics/reactions.html#custom-emojis
 
@@ -18,7 +35,7 @@ module.exports = {
     },
     getChannelIdAsync: async function (guild, channelName){
         
-        if(guild == null || channelName == null) return null;
+        if(guild == null || channelName == null) return "#" + channelName;
         
         return await guild.channels.cache.find(channel => channel.name === channelName).toString();
     },

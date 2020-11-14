@@ -4,15 +4,17 @@ This project creates a Discord bot to automate a "Gems of War" daily honour rota
 
 ## Commands
 
-| Command       | Alternative  | Description                                                                     |
-|---------------|--------------|---------------------------------------------------------------------------------|
-| !about        |              | Info on how to add new functionality to 4EE-FAH                                 |
-| !guildwars    | !gw          | Explain Guild Wars scoring                                                      |
-| !help         |              | List all available commands                                                     |
-| !honour       | !honor       | Display today's honour recipient (Uses GMT timings to work out the current day) |
-| !honourweekly | !honorweekly | Displays the current week's honour recipients by day                            |
-| !members      |              | Lists the Guild members GoW account names                                       |
-| !taskpoll     |              | Creates a taskpoll for Epic tasks                                               |
+| Command       | Alternative  | Description                                                                             |
+|---------------|--------------|-----------------------------------------------------------------------------------------|
+| !about        |              | Info on how to add new functionality to 4EE-FAH                                         |
+| !guildwars    | !gw          | Explain Guild Wars scoring                                                              |
+| !help         |              | List all available commands                                                             |
+| !honour       | !honor       | Display today's honour recipient (Uses GMT timings to work out the current day)         |
+| !honourshow   | !honorshow   | Add one or more guild member to the honour rota. Usage !honourshow John "Jane Doe"      |
+| !honourhide   | !honorhide   | Remove one or more guild member to the honour rota. Usage !honourhide John \"Jane Doe\" |
+| !honourweekly | !honorweekly | Displays the current week's honour recipients by day                                    |
+| !members      |              | Lists the Guild members GoW account names                                               |
+| !taskpoll     |              | Creates a taskpoll for Epic tasks                                                       |
 
 Table created with [Tables Generator](https://www.tablesgenerator.com/markdown_tables)
 
