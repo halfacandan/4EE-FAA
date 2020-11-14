@@ -46,7 +46,6 @@ function MakeApiGetCallAsync(endpointPath, jwtToken) {
 
     const options = {
         url: apiEndpoint,
-        method: method,
         headers: {
             'Content-Type': 'application/json',
             'Jwt-Auth': jwtToken

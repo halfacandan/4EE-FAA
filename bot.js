@@ -28,10 +28,10 @@ bot.on('message', async message => {
     //if(message.channel != targetChannelId) return;
 
     // Define the reply
-    var reply = null;
     var data = null;
-    var replyToPerson = true;
+    var reply = null;
     var reactions = null;
+    var replyToPerson = true;
 
     let parsedMessage = await helpers.ParseMessage(message);
     var discordUser = "@TestUser";
@@ -101,7 +101,7 @@ bot.on('message', async message => {
     // Post the reply
     if(reply != null){
         var replyMessage;
-        if(replyToPerson){
+        if(replyToPerson || message.channel == null){
             replyMessage = await message.reply("\n".reply);
         } else {
             replyMessage = await message.channel.send(reply);
