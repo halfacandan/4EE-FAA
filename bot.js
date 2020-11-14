@@ -102,7 +102,7 @@ bot.on('message', async message => {
     if(reply != null){
         var replyMessage;
         if(replyToPerson || message.channel == null){
-            replyMessage = await message.reply("\n".reply);
+            replyMessage = await message.reply("\n" + reply);
         } else {
             replyMessage = await message.channel.send(reply);
         }

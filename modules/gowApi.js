@@ -85,6 +85,7 @@ function MakeApiPostCallAsync(endpointPath, jwtToken, postData = null) {
             if (response.statusCode != 200) {
                 reject(null);
             }
+            console.log(body);
             resolve(JSON.parse(body));
         });
     });
