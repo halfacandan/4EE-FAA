@@ -4,7 +4,7 @@ const discord = require('discord.js');
 const bot = new discord.Client();
 
 // Get the security token
-const botName = client.user.username;
+const botName = bot.user.username;
 const jwt = require('./modules/jwt.js');
 const jwtPayload = {
     user: botName
