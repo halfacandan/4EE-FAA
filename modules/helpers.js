@@ -1,14 +1,15 @@
 module.exports = {
     ParseMessage: async function (message){
 
-        const regexp = /!([a-z]+)|(?:![a-z]+)?(?:\s((?:"[^"]+"|[^\s]+)))/g;
-        const parsedString = [...message.matchAll(regexp)];
+        const matchAll = require("match-all");
 
-        let command = typeof(parsedString[0]) === "undefined" ? null : parsedString[0][0].toLowerCase();
+        const regexp = /(![a-z]+)|(?:![a-z]+)?(?:\s((?:"[^"]+"|[^\s]+)))/g;
+        const parsedString = matchAll(message, regexp).toArray();
+
+        let command = parsedString.length < 1 || parsedString[0].trim().slice(0,1) != "!" ? null : parsedString.shift().trim().toLowerCase();
         let arguments = parsedString
-            .map(function(groups){
-                let argument = typeof(groups[2]) !== "undefined"  ?groups[2].replace(/"/g,"").trim() : null;
-                return argument;  
+            .map(function(argument){
+                return argument.replace(/"/g,"").trim();  
             })
             .filter(argument => argument != null &&  argument.length > 0);
 
