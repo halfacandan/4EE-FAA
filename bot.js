@@ -1,15 +1,13 @@
+const jwt = require('./modules/jwt.js');
 const helpers = require('./modules/helpers.js');
 const messages = require('./modules/messages.js');
 const discord = require('discord.js');
 const bot = new discord.Client();
 
-// Get the security token
-const botName = bot.user.username;
-const jwt = require('./modules/jwt.js');
-const jwtPayload = {
-    user: botName
-};
-let jwtToken = jwt.GenerateToken(jwtPayload);
+// Define global variables
+var botName;
+var jwtPayload;
+var jwtToken;
 
 // Connect to the GoW API
 const gowApi = require('./modules/gowApi.js');
@@ -19,6 +17,15 @@ const targetChannelId = "774654841120620576";
 
 // Define Bot Behaviours
 bot.on('ready', () => {
+
+    botName = bot.user.username;
+
+    // Get the security token
+    jwtPayload = {
+        user: botName
+    };
+    jwtToken = jwt.GenerateToken(jwtPayload);
+
     console.log(`${botName} is online`);
 });
 
