@@ -1,8 +1,9 @@
 module.exports = {
-    ParseMessage: function (message){
+    ParseMessage: async function (message){
+
         const regexp = /!([a-z]+)|(?:![a-z]+)?(?:\s((?:"[^"]+"|[^\s]+)))/g;
-    
         const parsedString = [...message.matchAll(regexp)];
+
         let command = typeof(parsedString[0]) === "undefined" ? null : parsedString[0][0].toLowerCase();
         let arguments = parsedString
             .map(function(groups){
@@ -10,7 +11,7 @@ module.exports = {
                 return argument;  
             })
             .filter(argument => argument != null &&  argument.length > 0);
-      
+
         return {
             "Command": command,
             "Arguments": arguments

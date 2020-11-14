@@ -33,12 +33,12 @@ bot.on('message', async message => {
     var replyToPerson = true;
     var reactions = null;
 
-    let parsedMessage = helpers.ParseMessage(message);
+    let parsedMessage = await helpers.ParseMessage(message);
     var discordUser = "@TestUser";
 
     switch (parsedMessage.Command) {
         case '!about':
-            reply = messages.AboutThisBot();
+            reply = await messages.AboutThisBot();
             break;
 
         case '!guildwars':
@@ -46,11 +46,11 @@ bot.on('message', async message => {
             let channelOnGwDefence = await helpers.getChannelIdAsync(message.guild, "on_gw_defence");
             let channelOnGwOffence = await helpers.getChannelIdAsync(message.guild, "on_gw_offence");
 
-            reply = messages.ExplainGuldWars(channelOnGwDefence, channelOnGwOffence);
+            reply = await messages.ExplainGuldWars(channelOnGwDefence, channelOnGwOffence);
             break;
 
         case '!help':
-            reply = messages.ListBotCommands();
+            reply = await messages.ListBotCommands();
             break;
 
         case'!honour':
@@ -92,8 +92,8 @@ bot.on('message', async message => {
             break;
 
         case '!taskpoll':
-            reply = messages.TaskPoll;
-            reactions = messages.TaskPollReactions;
+            reply = await messages.TaskPoll();
+            reactions = await messages.TaskPollReactions();
             replyToPerson = false;
             break;
     }

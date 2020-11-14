@@ -1,5 +1,5 @@
 module.exports = {
-    AboutThisBot: function(){
+    AboutThisBot: async function(){
         return "This bot is maintained by @Plip. If you'd like to add some funtionality then drop @Plip a DM or submit your own code at https://github.com/halfacandan/4EE-FAA";
     },
     ExplainGuldWars: function(channelOnGwDefence, channelOnGwOffence){
@@ -16,7 +16,7 @@ module.exports = {
 
         return message;
     },
-    ListBotCommands: function(){
+    ListBotCommands: async function(){
         
         message =   "**!about** - Info on how to add new functionality to 4EE-FAH\n" +
                     "**!guildwars** (or **!gw**) - Explain Guild Wars scoring\n" +
@@ -29,10 +29,10 @@ module.exports = {
         
         return message;
     },
-    TaskPoll: function(){
+    TaskPoll: async function(){
         return "Poll for next week: Which Epic task should we try to finish first?";
     },
-    TaskPollReactions: function(){
+    TaskPollReactions: async function(){
         return Array(
             ":Mana_Blue_Water:",
             ":Mana_Brown_Earth:",
