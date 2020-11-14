@@ -70,6 +70,7 @@ function MakeApiPostCallAsync(endpointPath, jwtToken, postData = null) {
     const options = {
         url: apiEndpoint,
         method :"POST",
+        followAllRedirects: true,
         body: postData,
         json: true,
         headers: {

@@ -37,7 +37,7 @@ module.exports = {
     },
     getChannelIdAsync: async function (guild, channelName){
         
-        if(guild == null || channelName == null) return "#" + channelName;
+        if(guild == null || channelName == null) return "**#" + channelName + "**";
         
         return await guild.channels.cache.find(channel => channel.name === channelName).toString();
     },
