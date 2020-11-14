@@ -29,6 +29,7 @@ bot.on('message', async message => {
 
     // Define the reply
     var reply = null;
+    var data = null;
     var replyToPerson = true;
     var reactions = null;
 
@@ -54,7 +55,7 @@ bot.on('message', async message => {
 
         case'!honour':
         case'!honor':
-            let data = await gowApi.GetDailyGuildHonour(jwtToken);
+            data = await gowApi.GetDailyGuildHonour(jwtToken);
             if(data == null) return;
 
             reply = data.message;
@@ -64,28 +65,28 @@ bot.on('message', async message => {
 
         case '!honourshow':
         case'!honorshow':
-            let data = await gowApi.IncludeGuildMembersInHonourRota(parsedMessage.Arguments, discordUser, jwtToken);
+            data = await gowApi.IncludeGuildMembersInHonourRota(parsedMessage.Arguments, discordUser, jwtToken);
             if(data == null) return;
             reply = data.message;
             break;
 
         case '!honourhide':
         case'!honorhide':
-            let data = await gowApi.ExcludeGuildMembersFromHonourRota(parsedMessage.Arguments, discordUser, jwtToken);
+            data = await gowApi.ExcludeGuildMembersFromHonourRota(parsedMessage.Arguments, discordUser, jwtToken);
             if(data == null) return;
             reply = data.message;
             break;
 
         case '!honourweekly':
         case '!honorweekly':
-            let data = await gowApi.GetWeeklyGuildHonour(jwtToken);
+            data = await gowApi.GetWeeklyGuildHonour(jwtToken);
             if(data == null) return;
             reply = data.message;
             replyToPerson = false;
             break;
 
         case '!members':
-            let data = await gowApi.GetGuildMembers(jwtToken);
+            data = await gowApi.GetGuildMembers(jwtToken);
             if(data == null) return;
             reply = data.message;
             break;
