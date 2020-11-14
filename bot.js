@@ -134,7 +134,7 @@ bot.on('message', async message => {
         if(replyToPerson || message.channel == null){
             replyMessage = await message.reply("\n" + reply);
         } else {
-            replyMessage = await message.channel.send(reply);
+            replyMessage = await message.channel.send(reply, { split: true });
         }
         await helpers.reactAsync(bot, replyMessage, reactions);
     }
