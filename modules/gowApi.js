@@ -46,6 +46,7 @@ function MakeApiGetCallAsync(endpointPath, jwtToken) {
 
     const options = {
         url: apiEndpoint,
+        json: true,
         headers: {
             'Content-Type': 'application/json',
             'Jwt-Auth': jwtToken
@@ -58,7 +59,7 @@ function MakeApiGetCallAsync(endpointPath, jwtToken) {
             if (response.statusCode != 200) {
                 reject(null);
             }
-            resolve(JSON.parse(body));
+            resolve(body);
         });
     });
 }
@@ -86,8 +87,7 @@ function MakeApiPostCallAsync(endpointPath, jwtToken, postData = null) {
             if (response.statusCode != 200) {
                 reject(null);
             }
-            console.log(body);
-            resolve(JSON.parse(body));
+            resolve(body);
         });
     });
 }
