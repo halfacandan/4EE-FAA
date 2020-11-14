@@ -33,6 +33,7 @@ module.exports = {
                     "**!honour** (or **!honor**) - Display today's honour recipient\n" +
                     "**!honouradd** (or **!honoradd**) - Add one or more guild member to the honour rota. Usage !honouradd John \"Jane Doe\"\n" +
                     "**!honourremove** (or **!honorremove**) - Remove one or more guild member to the honour rota. Usage !honourremove John \"Jane Doe\"\n" +
+                    "**!honourrota** (or **!honorrota**) - Displays the current, 18 day honour rota\n" +     
                     "**!honourweekly** (or **!honorweekly**) - Displays the current week's honour recipients by day\n" +
                     "**!members** - Lists the Guild members GoW account names\n" +
                     "**!taskpoll** - Creates a taskpoll for Epic tasks\n";

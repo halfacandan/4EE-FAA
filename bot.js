@@ -92,6 +92,14 @@ bot.on('message', async message => {
             reply = data.message;
             break;
 
+        case '!honourrota':
+        case '!honorrota':
+            data = await gowApi.GetGuildHonourRota(jwtToken);
+            if(data == null) return;
+            reply = data.message;
+            replyToPerson = false;
+            break;
+
         case '!honourweekly':
         case '!honorweekly':
             data = await gowApi.GetWeeklyGuildHonour(jwtToken);

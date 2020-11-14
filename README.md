@@ -12,6 +12,7 @@ This project creates a Discord bot to automate a "Gems of War" daily honour rota
 | !honour       | !honor       | Display today's honour recipient (Uses GMT timings to work out the current day)           |
 | !honouradd    | !honoradd    | Add one or more guild member to the honour rota. Usage !honouradd John "Jane Doe"         |
 | !honourremove | !honorremove | Remove one or more guild member to the honour rota. Usage !honourremove John \"Jane Doe\" |
+| !honourrota   | !honorrota   | Displays the current, 18 day honour rota                                                  |
 | !honourweekly | !honorweekly | Displays the current week's honour recipients by day                                      |
 | !members      |              | Lists the Guild members GoW account names                                                 |
 | !taskpoll     |              | Creates a taskpoll for Epic tasks                                                         |

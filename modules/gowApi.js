@@ -9,6 +9,11 @@ module.exports = {
         let json = await MakeApiGetCallAsync(endpointPath, jwtToken);
         return json;
     },
+    GetGuildHonourRota: async function (jwtToken){
+        const endpointPath = "v1/guild/honour/rota";
+        let json = await MakeApiGetCallAsync(endpointPath, jwtToken);
+        return json;
+    },
     GetGuildMembers: async function (jwtToken){
         const endpointPath = "v1/guild/members";
         let json = await MakeApiGetCallAsync(endpointPath, jwtToken);
