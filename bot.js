@@ -63,15 +63,15 @@ bot.on('message', async message => {
             replyToPerson = false;
             break;
 
-        case '!honourshow':
-        case'!honorshow':
+        case '!honouradd':
+        case'!honoradd':
             data = await gowApi.IncludeGuildMembersInHonourRota(parsedMessage.Arguments, discordUser, jwtToken);
             if(data == null) return;
             reply = data.message;
             break;
 
-        case '!honourhide':
-        case'!honorhide':
+        case '!honourremove':
+        case'!honorremove':
             data = await gowApi.ExcludeGuildMembersFromHonourRota(parsedMessage.Arguments, discordUser, jwtToken);
             if(data == null) return;
             reply = data.message;
