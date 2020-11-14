@@ -5,10 +5,10 @@ module.exports = {
                     "The honour rota is calculated dynamically based on the calendar date, who is currently in the guild and who is part of the honour rota.\n\n" +
                     "The calculation uses the following logic:\n" +
                     "  - The honour rota splits the year up into 18 day chunks with a free honour day every 6th day (days 6, 12 and 18)\n" +
-                    "  - The final 5 or 6 days of a calander year (which don't fit in the 18 day cycle) are all set as free honour days\n" +
-                    "  - The other 15 days are used to pick two guild members to receive honour\n" +
+                    "  - The other 15 days of the 18 day cycle are used to pick two guild members to receive honour each day\n" +
                     "  - The guild members are chosen in a set order, based upon how long they have been a member of the guild so that each person will get the same number of honour days as everyone else\n" +
-                    "  - When a guild member has reached their maximum honour, they can be excluded from the rota and \"Free Honour\" will appear instead of their name in the honour rota";
+                    "  - When a guild member has reached their maximum honour, they can be excluded from the rota and \"Free Honour\" will appear instead of their name in the honour rota\n" +
+                    "  - The final 5 or 6 days of a calander year (which don't fit in the 18 day cycle) are all set as free honour days\n";
 
         return message;
     },
