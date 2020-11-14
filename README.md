@@ -15,6 +15,7 @@ This project creates a Discord bot to automate a "Gems of War" daily honour rota
 | !honourrota   | !honorrota   | Displays the current, 18 day honour rota                                                  |
 | !honourweekly | !honorweekly | Displays the current week's honour recipients by day                                      |
 | !members      |              | Lists the Guild members GoW account names                                                 |
+| !patchnotes   |              | Gets the latest Major patch note and notes for any subsequent Minor patches               |
 | !taskpoll     |              | Creates a taskpoll for Epic tasks                                                         |
 
 Table created with [Tables Generator](https://www.tablesgenerator.com/markdown_tables)

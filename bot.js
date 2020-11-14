@@ -114,6 +114,13 @@ bot.on('message', async message => {
             reply = data.message;
             break;
 
+        case '!patchnotes':
+            data = await gowApi.GetPatchNotes(jwtToken);
+            if(data == null) return;
+            reply = data.message;
+            replyToPerson = false;
+            break;
+
         case '!taskpoll':
             reply = await messages.TaskPoll();
             reactions = await messages.TaskPollReactions();

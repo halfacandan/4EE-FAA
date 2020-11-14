@@ -1,4 +1,9 @@
 module.exports = {
+    GetPatchNotes: async function (jwtToken){
+        const endpointPath = "v1/game/patchnotes";
+        let json = await MakeApiGetCallAsync(endpointPath, jwtToken);
+        return json;
+    },
     GetDailyGuildHonour: async function (jwtToken){
         const endpointPath = "v1/guild/honour/daily";
         let json = await MakeApiGetCallAsync(endpointPath, jwtToken);
