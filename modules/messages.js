@@ -1,9 +1,10 @@
 module.exports = {
     AboutThisBot: async function(){
 
-        message =   "This bot is maintained by @Plip. If you'd like to add some funtionality then drop @Plip a DM or submit your own code at https://github.com/halfacandan/4EE-FAA\n\n" +
-                    `Several of the functions are controlled by an API. Documentation is available at ${process.env.API_ENDPOINT_BASE}/swagger/\n\n` +
-                    "The honour rota is calculated dynamically based on the calendar date, who is currently in the guild and who is part of the honour rota.\n\n" +
+        message =   "This bot is maintained by @Plip. If you'd like to add some funtionality then drop @Plip a DM or submit your own code at https://github.com/halfacandan/4EE-FAA. " +
+                    `Several of the functions are controlled by an API. Documentation is available at ${process.env.API_ENDPOINT_BASE}swagger/\n\n` +
+                    "🌟Honour Rota🌟 \n\n" +
+                    "The honour rota is calculated dynamically based on the calendar date, who is currently in the guild and who is part of the honour rota. " +
                     "The calculation uses the following logic:\n" +
                     "  - The honour rota splits the year up into 18 day chunks with a free honour day every 6th day (days 6, 12 and 18)\n" +
                     "  - The other 15 days of the 18 day cycle are used to pick two guild members to receive honour each day\n" +
@@ -53,6 +54,6 @@ module.exports = {
             ":Mana_Green_Nature:",
             ":Mana_Purple_Magic:",
             ":Mana_Red_Fire:",
-            ":Mana_Yellow_Wind:");;
+            ":Mana_Yellow_Wind:");
     }
 }
