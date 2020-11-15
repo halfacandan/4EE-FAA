@@ -52,8 +52,6 @@ module.exports = {
         for(var i=0; i < reactions.length; i++){
             let emojiCode = await this.getEmojiCodeAsync(bot, reactions[i]);
             if(emojiCode != null){
-                console.log("React to this message");
-                console.log(message);
                 await message.react(emojiCode);
             }
         }

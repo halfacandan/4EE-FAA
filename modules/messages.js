@@ -36,8 +36,8 @@ module.exports = {
                     "**!honourrota** (or **!honorrota**) - Displays the current, 18 day honour rota\n" +     
                     "**!honourweekly** (or **!honorweekly**) - Displays the current week's honour recipients by day\n" +
                     "**!members** - Lists the Guild members GoW account names\n" +
-                    "**!patchnotelatest** - Gets the latest patch note\n" +
-                    "**!patchnotes** - Gets the latest Major patch note and notes for any subsequent Minor patches\n" +
+                    "**!patchnotes** - Gets the latest patch note\n" +
+                    "**!patchnotesmajor** - Gets the latest Major patch note and notes for any subsequent Minor patches\n" +
                     "**!taskpoll** - Creates a taskpoll for Epic tasks\n";
         
         return message;
