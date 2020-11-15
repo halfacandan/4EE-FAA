@@ -1,9 +1,10 @@
 module.exports = {
     AboutThisBot: async function(){
 
-        message =   "This bot is maintained by @Plip. If you'd like to add some funtionality then drop @Plip a DM or submit your own code at https://github.com/halfacandan/4EE-FAA. " +
-                    `Several of the functions are controlled by an API. Documentation is available at ${process.env.API_ENDPOINT_BASE}swagger/\n\n` +
-                    "🌟Honour Rota🌟 \n\n" +
+        message =   "This bot and the associated API are maintained by @Plip. If you'd like to add some funtionality then drop him a DM. You can also:\n" +
+                    "  - Submit your own code at https://github.com/halfacandan/4EE-FAA.\n" +
+                    `  - View the API Documentation at ${process.env.API_ENDPOINT_BASE}swagger/\n\n` +
+                    "🌟 Honour Rota 🌟 \n\n" +
                     "The honour rota is calculated dynamically based on the calendar date, who is currently in the guild and who is part of the honour rota. " +
                     "The calculation uses the following logic:\n" +
                     "  - The honour rota splits the year up into 18 day chunks with a free honour day every 6th day (days 6, 12 and 18)\n" +
@@ -16,7 +17,7 @@ module.exports = {
     },
     ExplainGuldWars: function(channelOnGwDefence, channelOnGwOffence){
 
-        message =   "⚔️Guild Wars Scoring⚔️ \n\n" +
+        message =   "⚔️ Guild Wars Scoring ⚔️ \n\n" +
                     `Monday is a good day to set up your defense teams and buy any Sentinels you want to use, they are effective both for attack and defense. The ${channelOnGwDefence} channel is a great place to discuss your teams or get some inspiration and help.\n\n` +
                     "Using 24 different troops for defence will get you 500 extra points each day you play.\n\n" +
                     `For your attack teams you can use any that you like, but you'll get extra points when you use troops with the colour of the day. There is a wealth of teams posted in the ${channelOnGwOffence} channel. Other things that will have a positive effect on your score are:\n` +
