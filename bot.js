@@ -29,10 +29,16 @@ bot.on('ready', () => {
     console.log(`${botName} is online`);
 });
 
-bot.on('message', async function(user, userID, channelID, message, event) {
+bot.on('message', async (user, userID, channelID, message, event) => {
 
     // Limit the bot commands to a particular channel
     //if(message.channel != targetChannelId) return;
+
+    console.log(user);
+    console.log(userID);
+    console.log(channelID);
+    console.log(message);
+    console.log(event);
 
     var discordUser = message.author.username;
 
