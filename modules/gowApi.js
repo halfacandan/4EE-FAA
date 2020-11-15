@@ -1,5 +1,10 @@
 module.exports = {
-    GetPatchNotes: async function (jwtToken){
+    GetLatestPatchNote: async function (jwtToken){
+        const endpointPath = "v1/game/patchnotes/latest";
+        let json = await MakeApiGetCallAsync(endpointPath, jwtToken);
+        return json;
+    },
+    GetLatestMajorPatchNote: async function (jwtToken){
         const endpointPath = "v1/game/patchnotes";
         let json = await MakeApiGetCallAsync(endpointPath, jwtToken);
         return json;

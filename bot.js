@@ -115,9 +115,16 @@ bot.on('message', async message => {
             break;
 
         case '!patchnotes':
-            data = await gowApi.GetPatchNotes(jwtToken);
+            data = await gowApi.GetLatestPatchNote(jwtToken);
             if(data == null) return;
-            reply = data.message;
+            reply = data.messages;
+            replyToPerson = false;
+            break;
+
+        case '!patchnotesmajor':
+            data = await gowApi.GetLatestMajorPatchNote(jwtToken);
+            if(data == null) return;
+            reply = data.messages;
             replyToPerson = false;
             break;
 
@@ -134,7 +141,10 @@ bot.on('message', async message => {
         if(replyToPerson || message.channel == null){
             replyMessage = await message.reply("\n" + reply);
         } else {
-            replyMessage = await message.channel.send(reply, { split: true });
+            replies = Array.isArray(reply) ? reply : [reply];
+            replies.forEach(item => 
+                replyMessage = await message.channel.send(reply, { split: true })
+            );
         }
         await helpers.reactAsync(bot, replyMessage, reactions);
     }

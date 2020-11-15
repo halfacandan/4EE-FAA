@@ -4,19 +4,20 @@ This project creates a Discord bot to automate a "Gems of War" daily honour rota
 
 ## Commands
 
-| Command       | Alternative  | Description                                                                               |
-|---------------|--------------|-------------------------------------------------------------------------------------------|
-| !about        |              | Info on how to add new functionality to 4EE-FAH                                           |
-| !guildwars    | !gw          | Explain Guild Wars scoring                                                                |
-| !help         |              | List all available commands                                                               |
-| !honour       | !honor       | Display today's honour recipient (Uses GMT timings to work out the current day)           |
-| !honouradd    | !honoradd    | Add one or more guild member to the honour rota. Usage !honouradd John "Jane Doe"         |
-| !honourremove | !honorremove | Remove one or more guild member to the honour rota. Usage !honourremove John \"Jane Doe\" |
-| !honourrota   | !honorrota   | Displays the current, 18 day honour rota                                                  |
-| !honourweekly | !honorweekly | Displays the current week's honour recipients by day                                      |
-| !members      |              | Lists the Guild members GoW account names                                                 |
-| !patchnotes   |              | Gets the latest Major patch note and notes for any subsequent Minor patches               |
-| !taskpoll     |              | Creates a taskpoll for Epic tasks                                                         |
+| Command          | Alternative  | Description                                                                               |
+|------------------|--------------|-------------------------------------------------------------------------------------------|
+| !about           |              | Info on how to add new functionality to 4EE-FAH                                           |
+| !guildwars       | !gw          | Explain Guild Wars scoring                                                                |
+| !help            |              | List all available commands                                                               |
+| !honour          | !honor       | Display today's honour recipient (Uses GMT timings to work out the current day)           |
+| !honouradd       | !honoradd    | Add one or more guild member to the honour rota. Usage !honouradd John "Jane Doe"         |
+| !honourremove    | !honorremove | Remove one or more guild member to the honour rota. Usage !honourremove John \"Jane Doe\" |
+| !honourrota      | !honorrota   | Displays the current, 18 day honour rota                                                  |
+| !honourweekly    | !honorweekly | Displays the current week's honour recipients by day                                      |
+| !members         |              | Lists the Guild members GoW account names                                                 |
+| !patchnotelatest |              | Gets the latest patch note                                                                |
+| !patchnotes      |              | Gets the latest Major patch note and notes for any subsequent Minor patches               |
+| !taskpoll        |              | Creates a taskpoll for Epic tasks                                                         |
 
 Table created with [Tables Generator](https://www.tablesgenerator.com/markdown_tables)
 
