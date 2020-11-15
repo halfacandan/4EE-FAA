@@ -149,6 +149,8 @@ bot.on('message', async message => {
             }
         }
         console.log(replyMessage);
+        replyMessage = Array.isArray(replyMessage) ? replyMessage[0] : replyMessage;
+        console.log(replyMessage);
         await helpers.reactAsync(bot, replyMessage, reactions);
     }
 });
