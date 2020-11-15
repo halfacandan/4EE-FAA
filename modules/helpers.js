@@ -43,19 +43,18 @@ module.exports = {
     },
     reactAsync: async function (bot, message, reactions){
 
-        if(bot == null || message == null) return;
+        if(bot == null || message == null || typeof(reactions) === "undefined" || reactions == null) return;
 
-        if(typeof(reactions) !== "undefined" && reactions != null){
-            
-            if(typeof(reactions) === "string"){
-                reactions = Array(reactions);
-            }
+        if(typeof(reactions) === "string"){
+            reactions = Array(reactions);
+        }
 
-            for(var i=0; i < reactions.length; i++){
-                let emojiCode = await this.getEmojiCodeAsync(bot, reactions[i]);
-                if(emojiCode != null){
-                    await message.react(emojiCode);
-                }
+        for(var i=0; i < reactions.length; i++){
+            let emojiCode = await this.getEmojiCodeAsync(bot, reactions[i]);
+            if(emojiCode != null){
+                console.log("React to this message");
+                console.log(message);
+                await message.react(emojiCode);
             }
         }
     }

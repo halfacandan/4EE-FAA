@@ -29,16 +29,10 @@ bot.on('ready', () => {
     console.log(`${botName} is online`);
 });
 
-bot.on('message', async (user, userID, channelID, message, event) => {
+bot.on('message', async message => {
 
     // Limit the bot commands to a particular channel
     //if(message.channel != targetChannelId) return;
-
-    console.log(user);
-    console.log(userID);
-    console.log(channelID);
-    console.log(message);
-    console.log(event);
 
     var discordUser = message.author.username;
 
@@ -147,11 +141,14 @@ bot.on('message', async (user, userID, channelID, message, event) => {
         if(replyToPerson || message.channel == null){
             replyMessage = await message.reply("\n" + reply);
         } else {
-            replies = Array.isArray(reply) ? reply : [reply];
+            replies = Array.isArray(reply) ? reply : Array(reply);
+            console.log("Reply Count: " + replies.length);
             for(var i=0; i < replies.length; i++){
+                console.log("Reply " + i + " of " + replies.length);
                 replyMessage = await message.channel.send(replies[i], { split: true });
             }
         }
+        console.log(replyMessage);
         await helpers.reactAsync(bot, replyMessage, reactions);
     }
 });
