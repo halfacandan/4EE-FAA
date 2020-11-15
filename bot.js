@@ -29,7 +29,7 @@ bot.on('ready', () => {
     console.log(`${botName} is online`);
 });
 
-bot.on('message', async message => {
+bot.on('message', async function(user, userID, channelID, message, event) {
 
     // Limit the bot commands to a particular channel
     //if(message.channel != targetChannelId) return;
