@@ -142,9 +142,9 @@ bot.on('message', async message => {
             replyMessage = await message.reply("\n" + reply);
         } else {
             replies = Array.isArray(reply) ? reply : [reply];
-            replies.forEach(item => 
-                replyMessage = await message.channel.send(reply, { split: true })
-            );
+            for(var i=0; i < replies.length; i++){
+                replyMessage = await message.channel.send(replies[i], { split: true });
+            }
         }
         await helpers.reactAsync(bot, replyMessage, reactions);
     }
