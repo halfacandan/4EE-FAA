@@ -7,6 +7,7 @@ This project creates a Discord bot to automate a "Gems of War" daily honour rota
 | Command          | Alternative  | Description                                                                               |
 |------------------|--------------|-------------------------------------------------------------------------------------------|
 | !about           |              | Info on how to add new functionality to 4EE-FAH                                           |
+| !campaign        |              | Show Hawx's latest campaign task list                                                     |
 | !guildwars       | !gw          | Explain Guild Wars scoring                                                                |
 | !help            |              | List all available commands                                                               |
 | !honour          | !honor       | Display today's honour recipient (Uses GMT timings to work out the current day)           |

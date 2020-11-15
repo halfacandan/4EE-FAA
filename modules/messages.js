@@ -32,6 +32,7 @@ module.exports = {
     ListBotCommands: async function(){
 
         message =   "**!about** - Info on how to add new functionality to 4EE-FAH\n" +
+                    "**!campaign** - Show Hawx's latest campaign task list\n" +
                     "**!guildwars** (or **!gw**) - Explain Guild Wars scoring\n" +
                     "**!honour** (or **!honor**) - Display today's honour recipient\n" +
                     "**!honouradd** (or **!honoradd**) - Add one or more guild member to the honour rota. Usage !honouradd John \"Jane Doe\"\n" +

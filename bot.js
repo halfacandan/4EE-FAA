@@ -56,6 +56,13 @@ bot.on('message', async message => {
             reply = await messages.AboutThisBot();
             break;
 
+        case '!campaign':
+            data = await gowApi.GetLatestCampaignTasks();
+            if(data == null) return;
+            reply = data.messages;
+            replyToPerson = false;
+            break;
+    
         case '!guildwars':
         case '!gw': 
             let channelOnGwDefence = await helpers.getChannelIdAsync(message.guild, "on_gw_defence");
@@ -115,14 +122,14 @@ bot.on('message', async message => {
             break;
 
         case '!patchnotes':
-            data = await gowApi.GetLatestPatchNote(jwtToken);
+            data = await gowApi.GetLatestPatchNote();
             if(data == null) return;
             reply = data.messages;
             replyToPerson = false;
             break;
 
         case '!patchnotesmajor':
-            data = await gowApi.GetLatestMajorPatchNote(jwtToken);
+            data = await gowApi.GetLatestMajorPatchNote();
             if(data == null) return;
             reply = data.messages;
             replyToPerson = false;

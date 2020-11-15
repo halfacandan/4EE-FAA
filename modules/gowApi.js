@@ -1,12 +1,17 @@
 module.exports = {
-    GetLatestPatchNote: async function (jwtToken){
-        const endpointPath = "v1/game/patchnotes/latest";
-        let json = await MakeApiGetCallAsync(endpointPath, jwtToken);
+    GetLatestCampaignTasks: async function (){
+        const endpointPath = "v1/game/campaigntasks/latest";
+        let json = await MakeApiGetCallAsync(endpointPath, null);
         return json;
     },
-    GetLatestMajorPatchNote: async function (jwtToken){
+    GetLatestPatchNote: async function (){
+        const endpointPath = "v1/game/patchnotes/latest";
+        let json = await MakeApiGetCallAsync(endpointPath, null);
+        return json;
+    },
+    GetLatestMajorPatchNote: async function (){
         const endpointPath = "v1/game/patchnotes";
-        let json = await MakeApiGetCallAsync(endpointPath, jwtToken);
+        let json = await MakeApiGetCallAsync(endpointPath, null);
         return json;
     },
     GetDailyGuildHonour: async function (jwtToken){
