@@ -44,7 +44,7 @@ bot.on('message', async message => {
 
     // Parse the message
     let parsedMessage = await helpers.ParseMessage(message);
-    console.log(parsedMessage);
+
     // Define the reply
     var data = null;
     var reply = null;
