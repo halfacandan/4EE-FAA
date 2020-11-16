@@ -81,6 +81,8 @@ function MakeApiGetCallAsync(endpointPath, jwtToken) {
             }
             resolve(body);
         });
+    }).catch((reason) => {
+        console.log(`The promise was rejected because (${reason})`);
     });
 }
 
@@ -109,5 +111,7 @@ function MakeApiPostCallAsync(endpointPath, jwtToken, postData = null) {
             }
             resolve(body);
         });
+    }).catch((reason) => {
+        console.log(`The promise was rejected because (${reason})`);
     });
 }
