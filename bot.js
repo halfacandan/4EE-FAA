@@ -26,6 +26,9 @@ bot.on('ready', () => {
     };
     jwtToken = jwt.GenerateToken(jwtPayload);
 
+    bot.user.setStatus('online');
+    bot.user.setActivity('!help', { type: 'LISTENING' });
+
     console.log(`${botName} is online`);
 });
 
@@ -47,115 +50,152 @@ bot.on('message', async message => {
 
     // Define the reply
     var data = null;
-    var reply = null;
+    var replies = Array();
+    var embeddedMessage = null;
     var reactions = null;
     var replyToPerson = true;
 
     switch (parsedMessage.Command) {
         case '!about':
-            reply = await messages.AboutThisBot();
+            if(message.channel != null) message.channel.startTyping();
+
+            replies.push(await messages.AboutThisBot(discord));
             break;
 
         case '!campaign':
+            if(message.channel != null) message.channel.startTyping();
+
             data = await gowApi.GetLatestCampaignTasks();
             if(data == null) return;
-            reply = data.messages;
+            replies.push(data.messages);
             replyToPerson = false;
             break;
     
         case '!guildwars':
-        case '!gw': 
-            let channelOnGwDefence = await helpers.getChannelIdAsync(message.guild, "on_gw_defence");
-            let channelOnGwOffence = await helpers.getChannelIdAsync(message.guild, "on_gw_offence");
+        case '!gw':
+            if(message.channel != null) message.channel.startTyping();
+            
+            let channelOnGwDefence = await helpers.GetChannelIdAsync(message.guild, "on_gw_defence");
+            let channelOnGwOffence = await helpers.GetChannelIdAsync(message.guild, "on_gw_offence");        
 
-            reply = await messages.ExplainGuldWars(channelOnGwDefence, channelOnGwOffence);
+            replies.push(await messages.ExplainGuldWars(discord, channelOnGwDefence, channelOnGwOffence));
             break;
 
         case '!help':
-            reply = await messages.ListBotCommands();
+            if(message.channel != null) message.channel.startTyping();
+            
+            replies.push(await messages.ListBotCommands());
             break;
 
         case'!honour':
         case'!honor':
+            if(message.channel != null) message.channel.startTyping();
+        
             data = await gowApi.GetDailyGuildHonour(jwtToken);
             if(data == null) return;
 
-            reply = data.message;
+            replies.push(data.message);
             reactions = data.reactions;
             replyToPerson = false;
             break;
 
         case '!honouradd':
         case'!honoradd':
+            if(message.channel != null) message.channel.startTyping();
+        
             data = await gowApi.IncludeGuildMembersInHonourRota(parsedMessage.Arguments, discordUser, jwtToken);
             if(data == null) return;
-            reply = data.message;
+            replies.push(data.message);
             break;
 
         case '!honourremove':
         case'!honorremove':
+            if(message.channel != null) message.channel.startTyping();
+        
             data = await gowApi.ExcludeGuildMembersFromHonourRota(parsedMessage.Arguments, discordUser, jwtToken);
             if(data == null) return;
-            reply = data.message;
+            replies.push(data.message);
             break;
 
         case '!honourrota':
         case '!honorrota':
+            if(message.channel != null) message.channel.startTyping();
+            
             data = await gowApi.GetGuildHonourRota(jwtToken);
             if(data == null) return;
-            reply = data.message;
+            replies.push(data.message);
             replyToPerson = false;
             break;
 
         case '!honourweekly':
         case '!honorweekly':
+            if(message.channel != null) message.channel.startTyping();
+            
             data = await gowApi.GetWeeklyGuildHonour(jwtToken);
             if(data == null) return;
-            reply = data.message;
+            replies.push(data.message);
             replyToPerson = false;
             break;
 
         case '!members':
+            if(message.channel != null) message.channel.startTyping();
+            
             data = await gowApi.GetGuildMembers(jwtToken);
             if(data == null) return;
-            reply = data.message;
+            replies.push(data.message);
             break;
 
         case '!patchnotes':
+            if(message.channel != null) message.channel.startTyping();
+            
             data = await gowApi.GetLatestPatchNote();
             if(data == null) return;
-            reply = data.messages;
+            replies.push(data.messages);
             replyToPerson = false;
             break;
 
         case '!patchnotesmajor':
+            if(message.channel != null) message.channel.startTyping();
+            
             data = await gowApi.GetLatestMajorPatchNote();
             if(data == null) return;
-            reply = data.messages;
+            replies.push(data.messages);
             replyToPerson = false;
             break;
 
         case '!taskpoll':
-            reply = await messages.TaskPoll();
+            if(message.channel != null) message.channel.startTyping();
+            
+            replies.push(await messages.TaskPoll());
             reactions = await messages.TaskPollReactions();
             replyToPerson = false;
             break;
+
+        case '!test':
+            
+            if(message.channel != null) message.channel.startTyping();
+
+            data = await gowApi.GetGuildHonourRota(jwtToken);
+            if(data == null) return;
+
+            embeddedMessage = {
+                "embed": {
+                    "title": ":star:  Honour Rota",
+                    "description": "Monday 30th November to Sunday 6th December",
+                    "table": data.message
+                }
+            };
+
+            let testMessage = await messages.ParseEmbeddedMessage(discord, embeddedMessage);
+            replies.push(
+                testMessage
+            );
+            
+            replyToPerson = false;
+            break;            
     }
 
-    // Post the reply
-    if(reply != null){
-        var replyMessage;
-        if(replyToPerson || message.channel == null){
-            replyMessage = await message.reply("\n" + reply);
-        } else {
-            replies = Array.isArray(reply) ? reply : Array(reply);
-            for(var i=0; i < replies.length; i++){
-                replyMessage = await message.channel.send(replies[i], { split: true });
-            }
-        }
-        replyMessage = Array.isArray(replyMessage) ? replyMessage[0] : replyMessage;
-        await helpers.reactAsync(bot, replyMessage, reactions);
-    }
+    await messages.SendReplies(bot, message, replies, reactions, replyToPerson);
 });
 
 // Login to Discord as the Bot
