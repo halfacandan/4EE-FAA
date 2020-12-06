@@ -3,7 +3,7 @@ module.exports = {
 
         const matchAll = require("match-all");
 
-        const regexp = /(![a-zA-Z]+)|(?:![a-zA-Z]+)?(?:\s((?:"[^"]+"|[^\s]+)))/g;
+        const regexp = /(^![a-zA-Z]+)|(?:^![a-zA-Z]+)?(?:\s((?:"[^"]+"|[^\s]+)))/ig;
         const parsedString = matchAll(message, regexp).toArray();
 
         let command = parsedString.length < 1 || parsedString[0].trim().slice(0,1) != "!" ? null : parsedString.shift().trim().toLowerCase();

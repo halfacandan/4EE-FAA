@@ -1,14 +1,17 @@
 const LineBreak = "\n\uFEFF";
 
 module.exports = {
-    AboutThisBot: async function(discord){
+    BotError: function(){
+        return "**\\*Blip\\*** *\\*Blip\\** ***\\*Blip\\**** End of Cheese Error";
+    },
+    AboutThisBot: async function(){
 
         const BotAuthorDiscordId = '342266718334353408';
 
         let embeddedMessage = {
             "embed": {
                 "title": ":robot:  4EE-FAA Bot",
-                "description": `4EE-FAA was created by <@!${BotAuthorDiscordId}>. Message him to get your ideas added to the bot.${LineBreak}`,
+                "description": `4EE-FAA was created by <@!${BotAuthorDiscordId}>. Message him with your ideas for the bot.${LineBreak}`,
                 "fields": [             
                     {
                         "name": ":star:  How the honour rota works",
@@ -20,16 +23,16 @@ module.exports = {
                     },
                     {
                         "name": ":nerd:  Geek Stuff",
-                        "value": " * [View the 4EE-FAA bot's node.js code on GitHub](https://github.com/halfacandan/4EE-FAA)\n" +
-                                ` * [View Plip's GoW API Swagger Documentation](${process.env.API_ENDPOINT_BASE}swagger/)`
+                        "value": " * [View the 4EE-FAA bot's node.js code](https://github.com/halfacandan/4EE-FAA)\n" +
+                                ` * [View Plip's GoW API Swagger Docs](${process.env.API_ENDPOINT_BASE}swagger/)`
                     }
                 ]
             }
         };
 
-        return await this.ParseEmbeddedMessage(discord, embeddedMessage);
+        return embeddedMessage;
     },
-    ExplainGuldWars: async function(discord, channelOnGwDefence, channelOnGwOffence){
+    ExplainGuldWars: async function(channelOnGwDefence, channelOnGwOffence){
 
         let embeddedMessage = {
             "embed": {
@@ -73,7 +76,7 @@ module.exports = {
             }
         };
 
-        return await this.ParseEmbeddedMessage(discord, embeddedMessage);
+        return embeddedMessage;
     },
     ListBotCommands: async function(){
 
@@ -120,15 +123,15 @@ module.exports = {
 
         var attachments = null;
 
-        if(embeddedMessage.embed.type == null){
+        if(typeof embeddedMessage.embed.type === "undefined" || embeddedMessage.embed.type == null){
             embeddedMessage.embed.type = "rich";
         }
 
-        if(embeddedMessage.embed.description != null){
+        if(typeof embeddedMessage.embed.description !== "undefined" && embeddedMessage.embed.description != null){
             embeddedMessage.embed.description = this.FixBulletPoints(embeddedMessage.embed.description);
         }
-        
-        if(embeddedMessage.embed.fields != null){
+
+        if(typeof embeddedMessage.embed.fields !== "undefined" && embeddedMessage.embed.fields != null){
             for(var i = 0; i < embeddedMessage.embed.fields.length; i++){
                 if(typeof embeddedMessage.embed.fields[i].value !== "undefined") {
                     let fixedFieldValue = this.FixBulletPoints(embeddedMessage.embed.fields[i].value);
@@ -136,32 +139,29 @@ module.exports = {
                 }
             }
         }
-        
-        if(embeddedMessage.embed.image == null && embeddedMessage.embed.table != null){
-            
-            const textToImage = require('text-to-image');
-            const PxPerChar = 10;
-            const MarginPx = 5;
-            let maxCharsPerRow = Math.max(...(embeddedMessage.embed.table.split("\n").map(el => el.length))) + 2;
-                
-            let image = await textToImage.generate(embeddedMessage.embed.table, {
-                "fontFamily": "Courier",
-                "fontSize": 16, // 16 = Approx 10px width per character
-                "lineHeight": 16,
-                "textColor": "#98b1b8", // Discord Light Gray
-                "bgColor": "#2f3136", // Discord Dark Gray
-                "maxWidth": maxCharsPerRow * PxPerChar + (2 * MarginPx),
-                "margin": MarginPx
-            });
-        
-            const imageStream = new Buffer.from(image.split(",")[1], 'base64');
 
-            var imageName;
-            if(embeddedMessage.embed.title != null){
+        if((typeof embeddedMessage.embed.image === "undefined" || embeddedMessage.embed.image == null) 
+                && typeof embeddedMessage.embed.table !== "undefined" && embeddedMessage.embed.table != null){
+
+            // The "text-to-image" npm package causes random crashes on Raspberry Pi 4 so use "text2png"
+            const text2png = require('text2png');
+            let imageStream = text2png(embeddedMessage.embed.table, {
+                font: '16px Courier',
+                //localFontPath: '../4EE-FAA/fonts/RobotoMono-Regular.ttf',
+                //localFontName: 'Roboto Mono',
+                color: 'white',
+                bgColor: '#2f3136', // Discord Dark Gray
+                lineSpacing: 0,
+                padding: 0,
+                output: 'buffer'
+            });
+
+            if(typeof embeddedMessage.embed.title !== "undefined" && embeddedMessage.embed.title != null){
                 imageName = embeddedMessage.embed.title.trim().toLowerCase().replace(/\s/g, "_").replace(/[^a-zA-Z0-9]/ig, "");
             } else {
                 imageName = Math.random().toString(36).replace(/[^a-z]+/ig, '').substr(0,5);
             }
+
             attachments = Array(new discord.MessageAttachment(imageStream, `${imageName}.png`));            
             embeddedMessage.embed.image = {
                 "url": `attachment://${imageName}.png`
@@ -210,27 +210,33 @@ module.exports = {
             return emojiShortcode;
         }
     },
-    SendReplies: async function(bot, userMessage, replies, reactions = null, replyToPerson = false){
-        
+    SendReplies: async function(discord, bot, userMessage, replies, reactions = null, replyToPerson = false){
+
         if(replies != null){
-            
+
+            var message;
             var finalReplyMessage;
 
             for(var i=0; i < replies.length; i++){
-                if(replyToPerson || userMessage.channel == null){
-                    if(typeof replies[i] === "string") replies[i] = "\n" + replies[i];
-                    finalReplyMessage = await userMessage.reply(replies[i]);
+                if(replyToPerson || userMessage == null || typeof userMessage.channel === "undefined" || userMessage.channel == null){
+                    if(typeof replies[i] === "string") {
+                        message = "\n" + replies[i];
+                    } else {
+                        message = await this.ParseEmbeddedMessage(discord, replies[i]);
+                    }
+                    finalReplyMessage = await userMessage.reply(message);
                 } else {
                     if(typeof replies[i] === "string") {
                         finalReplyMessage = await userMessage.channel.send(replies[i], { split: true });
                     } else {
-                        finalReplyMessage = await userMessage.channel.send(replies[i]);
+                        message = await this.ParseEmbeddedMessage(discord, replies[i]);
+                        finalReplyMessage = await userMessage.channel.send(message);
                     }                
                 }
             }
 
             if(reactions != null){
-                replyMessage = Array.isArray(finalReplyMessage) ? finalReplyMessage[0] : finalReplyMessage;
+                let replyMessage = Array.isArray(finalReplyMessage) ? finalReplyMessage[0] : finalReplyMessage;
                 await this.ReactToMesageAsync(bot, replyMessage, reactions);
             }
         }

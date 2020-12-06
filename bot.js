@@ -51,23 +51,28 @@ bot.on('message', async message => {
     // Define the reply
     var data = null;
     var replies = Array();
-    var embeddedMessage = null;
     var reactions = null;
     var replyToPerson = true;
+
+    if(parsedMessage.Command == null) return;
 
     switch (parsedMessage.Command) {
         case '!about':
             if(message.channel != null) message.channel.startTyping();
 
-            replies.push(await messages.AboutThisBot(discord));
+            replies.push(await messages.AboutThisBot());
             break;
 
         case '!campaign':
             if(message.channel != null) message.channel.startTyping();
 
             data = await gowApi.GetLatestCampaignTasks();
-            if(data == null) return;
-            replies.push(data.messages);
+            if(data == null) {
+                replies.push(messages.BotError());
+                break;
+            }
+
+            replies = replies.concat(data.messages);
             replyToPerson = false;
             break;
     
@@ -78,7 +83,7 @@ bot.on('message', async message => {
             let channelOnGwDefence = await helpers.GetChannelIdAsync(message.guild, "on_gw_defence");
             let channelOnGwOffence = await helpers.GetChannelIdAsync(message.guild, "on_gw_offence");        
 
-            replies.push(await messages.ExplainGuldWars(discord, channelOnGwDefence, channelOnGwOffence));
+            replies.push(await messages.ExplainGuldWars(channelOnGwDefence, channelOnGwOffence));
             break;
 
         case '!help':
@@ -92,7 +97,10 @@ bot.on('message', async message => {
             if(message.channel != null) message.channel.startTyping();
         
             data = await gowApi.GetDailyGuildHonour(jwtToken);
-            if(data == null) return;
+            if(data == null) {
+                replies.push(messages.BotError());
+                break;
+            }
 
             replies.push(data.message);
             reactions = data.reactions;
@@ -104,7 +112,11 @@ bot.on('message', async message => {
             if(message.channel != null) message.channel.startTyping();
         
             data = await gowApi.IncludeGuildMembersInHonourRota(parsedMessage.Arguments, discordUser, jwtToken);
-            if(data == null) return;
+            if(data == null) {
+                replies.push(messages.BotError());
+                break;
+            }
+
             replies.push(data.message);
             break;
 
@@ -113,17 +125,25 @@ bot.on('message', async message => {
             if(message.channel != null) message.channel.startTyping();
         
             data = await gowApi.ExcludeGuildMembersFromHonourRota(parsedMessage.Arguments, discordUser, jwtToken);
-            if(data == null) return;
+            if(data == null) {
+                replies.push(messages.BotError());
+                break;
+            }
+
             replies.push(data.message);
             break;
 
         case '!honourrota':
         case '!honorrota':
             if(message.channel != null) message.channel.startTyping();
-            
+
             data = await gowApi.GetGuildHonourRota(jwtToken);
-            if(data == null) return;
-            replies.push(data.message);
+            if(data == null) {
+                replies.push(messages.BotError());
+                break;
+            }
+
+            replies = replies.concat(data.messages);
             replyToPerson = false;
             break;
 
@@ -132,7 +152,11 @@ bot.on('message', async message => {
             if(message.channel != null) message.channel.startTyping();
             
             data = await gowApi.GetWeeklyGuildHonour(jwtToken);
-            if(data == null) return;
+            if(data == null) {
+                replies.push(messages.BotError());
+                break;
+            }
+
             replies.push(data.message);
             replyToPerson = false;
             break;
@@ -141,7 +165,11 @@ bot.on('message', async message => {
             if(message.channel != null) message.channel.startTyping();
             
             data = await gowApi.GetGuildMembers(jwtToken);
-            if(data == null) return;
+            if(data == null) {
+                replies.push(messages.BotError());
+                break;
+            }
+
             replies.push(data.message);
             break;
 
@@ -149,8 +177,12 @@ bot.on('message', async message => {
             if(message.channel != null) message.channel.startTyping();
             
             data = await gowApi.GetLatestPatchNote();
-            if(data == null) return;
-            replies.push(data.messages);
+            if(data == null) {
+                replies.push(messages.BotError());
+                break;
+            }
+
+            replies = replies.concat(data.messages);
             replyToPerson = false;
             break;
 
@@ -158,8 +190,12 @@ bot.on('message', async message => {
             if(message.channel != null) message.channel.startTyping();
             
             data = await gowApi.GetLatestMajorPatchNote();
-            if(data == null) return;
-            replies.push(data.messages);
+            if(data == null) {
+                replies.push(messages.BotError());
+                break;
+            }
+
+            replies = replies.concat(data.messages);
             replyToPerson = false;
             break;
 
@@ -172,30 +208,18 @@ bot.on('message', async message => {
             break;
 
         case '!test':
-            
-            if(message.channel != null) message.channel.startTyping();
+            var testMessage = await messages.AboutThisBot();
+            testMessage.embed.table = "This is a test!"
 
-            data = await gowApi.GetGuildHonourRota(jwtToken);
-            if(data == null) return;
-
-            embeddedMessage = {
-                "embed": {
-                    "title": ":star:  Honour Rota",
-                    "description": "Monday 30th November to Sunday 6th December",
-                    "table": data.message
-                }
-            };
-
-            let testMessage = await messages.ParseEmbeddedMessage(discord, embeddedMessage);
-            replies.push(
-                testMessage
-            );
-            
-            replyToPerson = false;
-            break;            
+            replies.push(testMessage);    
+            break;
+        
+        default:
+            replies.push(messages.BotError());
+            break;
     }
 
-    await messages.SendReplies(bot, message, replies, reactions, replyToPerson);
+    await messages.SendReplies(discord, bot, message, replies, reactions, replyToPerson);
 });
 
 // Login to Discord as the Bot
