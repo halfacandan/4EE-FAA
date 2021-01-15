@@ -78,22 +78,22 @@ module.exports = {
 
         return embeddedMessage;
     },
-    ListBotCommands: async function(){
+    ListBotCommands: async function(botAboutCommand = "about", botCommandPrefix = "!"){
 
-        message =   "**!about** - Info on how to add new functionality to 4EE-FAH\n" +
-                    "**!campaign** - Show Hawx's latest campaign task list\n" +
-                    "**!gw** - Explain Guild Wars scoring\n" +
-                    "**!honour** - Display today's honour recipient\n" +
-                    "**!honouradd** - Add one or more guild member to the honour rota. Usage !honouradd John \"Jane Doe\"\n" +
-                    "**!honourremove** - Remove one or more guild member to the honour rota. Usage !honourremove John \"Jane Doe\"\n" +
-                    "**!honourrota** - Displays the current, 18 day honour rota\n" +     
-                    "**!honourweekly** - Displays the current week's honour recipients by day\n" +
-                    "**!members** - Lists the Guild members GoW account names\n" +
-                    "**!patchnotes** - Gets the latest patch note\n" +
-                    "**!patchnotesmajor** - Gets the latest Major patch note and notes for any subsequent Minor patches\n" +
-                    "**!taskpoll** - Creates a taskpoll for Epic tasks\n";
-        
-        return message;
+        commands =   [
+            `**${botCommandPrefix}${botAboutCommand}** - Info on how to add new functionality to 4EE-FAH\n`,
+            `**${botCommandPrefix}gw** - Explain Guild Wars scoring\n`,
+            `**${botCommandPrefix}honour** - Display today's honour recipient\n`,
+            `**${botCommandPrefix}honouradd** - Add one or more guild member to the honour rota. Usage ${botCommandPrefix}honouradd John \"Jane Doe\"\n`,
+            `**${botCommandPrefix}honourremove** - Remove one or more guild member to the honour rota. Usage ${botCommandPrefix}honourremove John \"Jane Doe\"\n`,
+            `**${botCommandPrefix}honourrota** - Displays the current, 18 day honour rota\n`,
+            `**${botCommandPrefix}honourweekly** - Displays the current week's honour recipients by day\n`,
+            `**${botCommandPrefix}members** - Lists the Guild members GoW account names\n`,
+            //`**${botCommandPrefix}patchnotes** - Gets the latest patch note\n`,
+            //`**${botCommandPrefix}patchnotesmajor** - Gets the latest Major patch note and notes for any subsequent Minor patches\n`,
+            `**${botCommandPrefix}taskpoll** - Creates a taskpoll for Epic tasks\n`];
+
+        return commands;
     },
     TaskPoll: async function(){
         return "<@&304714829032325120> Poll for next week: Which Epic task should we try to finish first?";
@@ -116,6 +116,9 @@ module.exports = {
         text = text.replace(/ \* /g, bulletOne).replace(/ \*\* /g, bulletTwo);
         // Ordered lists
         text = text.replace(/ ([0-9]+(?:\.|\)) )/g, "\uFEFF\u2001$1").replace(/ ([0-9]+\.[0-9]+(?:\.|\)) )/g, "\uFEFF\u2001\u2001$1");
+
+        // Fix any incorrectly-escaped \uFEFF stringification issues
+        text = text.replace("\\uFEFF", "\uFEFF");
 
         return text;
     },
@@ -147,8 +150,6 @@ module.exports = {
             const text2png = require('text2png');
             let imageStream = text2png(embeddedMessage.embed.table, {
                 font: '16px Courier',
-                //localFontPath: '../4EE-FAA/fonts/RobotoMono-Regular.ttf',
-                //localFontName: 'Roboto Mono',
                 color: 'white',
                 bgColor: '#2f3136', // Discord Dark Gray
                 lineSpacing: 0,
@@ -162,10 +163,15 @@ module.exports = {
                 imageName = Math.random().toString(36).replace(/[^a-z]+/ig, '').substr(0,5);
             }
 
-            attachments = Array(new discord.MessageAttachment(imageStream, `${imageName}.png`));            
-            embeddedMessage.embed.image = {
-                "url": `attachment://${imageName}.png`
-            };
+            attachments = Array(new discord.MessageAttachment(imageStream, `${imageName}.png`));
+
+            if(attachments != null){
+                
+                embeddedMessage.files = attachments;                   
+                embeddedMessage.embed.image = {
+                    "url": `attachment://${imageName}.png`
+                }
+            }
         }
 
         if(attachments == null){
