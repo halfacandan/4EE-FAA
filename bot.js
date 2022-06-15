@@ -82,10 +82,10 @@ bot.on('message', async message => {
             if(message.channel != null) message.channel.startTyping();
                         
             botCommands = await messages.ListBotCommands(botAboutCommand, botCommandPrefix);
-            hawxCommands = await gowApi.AboutHawxCommands(botCommandPrefix);
+            //hawxCommands = await gowApi.AboutHawxCommands(botCommandPrefix);
 
-            var helpCommands = botCommands.concat(hawxCommands);
-            console.log(helpCommands);
+            var helpCommands = botCommands;//.concat(hawxCommands);
+            //console.log(helpCommands);
             let helpMessage = helpCommands.sort().join("");
             replies.push(helpMessage);
             break;
@@ -214,7 +214,7 @@ bot.on('message', async message => {
             break;
         
         default:
-
+            /*
             hawxCommands = await gowApi.ListHawxCommands(botCommandPrefix);
             for(var i=0; i < hawxCommands.commands.length; i++){
 
@@ -256,10 +256,11 @@ bot.on('message', async message => {
                     }
                 }
             }
+            */
 
-            if(replies.length < 1){
-                replies.push(messages.BotError());
-            }
+            //if(replies.length < 1){
+            //    replies.push(messages.BotError());
+            //}
             
             break;
     }
