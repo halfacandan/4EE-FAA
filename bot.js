@@ -58,6 +58,7 @@ bot.on('message', async message => {
     var replies = Array();
     var reactions = null;
     var replyToPerson = true;
+    var reactToMessageNumber = null;
 
     if(parsedMessage.Command == null) return;
 
@@ -103,6 +104,14 @@ bot.on('message', async message => {
             replies.push(data.message);
             reactions = data.reactions;
             replyToPerson = false;
+
+            if(data.message.includes("Free Honour")) {
+                replies.push("You can trade your free honour on GoW's global channel 989 for an additional boost to your account.");
+                replies.push("To get started, just send a message in the format shown in the image below:");
+                replies.push("http://www.s171553821.websitehome.co.uk/gow/images/honour.jpg");
+                var reactToMessageNumber = 0;
+            }
+
             break;
 
         case `${botCommandPrefix}honouradd`:
@@ -265,7 +274,7 @@ bot.on('message', async message => {
             break;
     }
 
-    await messages.SendReplies(discord, bot, message, replies, reactions, replyToPerson);
+    await messages.SendReplies(discord, bot, message, replies, reactions, replyToPerson, reactToMessageNumber);
 });
 
 // Login to Discord as the Bot

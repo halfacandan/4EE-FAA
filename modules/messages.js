@@ -216,12 +216,14 @@ module.exports = {
             return emojiShortcode;
         }
     },
-    SendReplies: async function(discord, bot, userMessage, replies, reactions = null, replyToPerson = false){
+    SendReplies: async function(discord, bot, userMessage, replies, reactions = null, replyToPerson = false, reactToMessageNumber = null){
 
         if(replies != null){
 
             var message;
             var finalReplyMessage;
+            var reacted = false;
+            var messages = [];
 
             for(var i=0; i < replies.length; i++){
                 if(replyToPerson || userMessage == null || typeof userMessage.channel === "undefined" || userMessage.channel == null){
@@ -230,18 +232,25 @@ module.exports = {
                     } else {
                         message = await this.ParseEmbeddedMessage(discord, replies[i]);
                     }
-                    finalReplyMessage = await userMessage.reply(message);
+                    messages.push(await userMessage.reply(message));
                 } else {
                     if(typeof replies[i] === "string") {
-                        finalReplyMessage = await userMessage.channel.send(replies[i], { split: true });
+                        messages.push(await userMessage.channel.send(replies[i], { split: true }));
                     } else {
                         message = await this.ParseEmbeddedMessage(discord, replies[i]);
-                        finalReplyMessage = await userMessage.channel.send(message);
+                        messages.push(await userMessage.channel.send(message));
                     }                
                 }
-            }
+                
+                finalReplyMessage = messages[i];
 
-            if(reactions != null){
+                if(reactToMessageNumber == i){                    
+                    let replyMessage = Array.isArray(finalReplyMessage) ? finalReplyMessage[0] : finalReplyMessage;
+                    await this.ReactToMesageAsync(bot, replyMessage, reactions);
+                    reacted = true;
+                }
+            }
+            if(reactions != null && reacted != true){
                 let replyMessage = Array.isArray(finalReplyMessage) ? finalReplyMessage[0] : finalReplyMessage;
                 await this.ReactToMesageAsync(bot, replyMessage, reactions);
             }
