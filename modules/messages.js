@@ -77,7 +77,8 @@ module.exports = {
         };
 
         let anonymousGuardiansInviteLink = "https://discord.gg/49FxcSeEKW";
-        let additionalHelpMessage = `You can also check out the GWS Offence channels and the #defense-ss-only channels on the Anonymous Guardians Server for some team suggestions: ${anonymousGuardiansInviteLink}`
+        let additionalHelpMessage = "You can also check out the **GWS Offence** channels and the **#defense-ss-only** channel " +
+                                    `on the Anonymous Guardians Server for some team suggestions: ${anonymousGuardiansInviteLink}`
 
         return [
             embeddedMessage,
