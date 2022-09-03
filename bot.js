@@ -1,13 +1,27 @@
 const botCommandPrefix = "!"
 const botHelpCommand = "help";
 const botAboutCommand = "about";
-const lineBreak = "\n\uFEFF";
+//const lineBreak = "\n\uFEFF";
 
+const discord = require('discord.js');
 const jwt = require('./modules/jwt.js');
 const helpers = require('./modules/helpers.js');
 const messages = require('./modules/messages.js');
-const discord = require('discord.js');
-const bot = new discord.Client();
+
+const bot = new discord.Client({ intents: [
+    discord.GatewayIntentBits.MessageContent,
+    discord.GatewayIntentBits.DirectMessages,
+    discord.GatewayIntentBits.DirectMessageReactions,
+    discord.GatewayIntentBits.DirectMessageTyping,    
+    discord.GatewayIntentBits.Guilds,
+    discord.GatewayIntentBits.GuildEmojisAndStickers,
+    discord.GatewayIntentBits.GuildMessages,    
+    discord.GatewayIntentBits.GuildMessageReactions,
+    discord.GatewayIntentBits.GuildMessageTyping
+] });
+
+// Required to intercept the slash commands
+const rest = new discord.REST({ version: '10' }).setToken(process.env.BOT_TOKEN);
 
 // Define global variables
 var botName;
@@ -21,7 +35,7 @@ const gowApi = require('./modules/gowApi.js');
 //const targetChannelId = "774654841120620576";
 
 // Define Bot Behaviours
-bot.on('ready', () => {
+bot.on('ready', async () => {
 
     botName = bot.user.username;
 
@@ -31,13 +45,185 @@ bot.on('ready', () => {
     };
     jwtToken = jwt.GenerateToken(jwtPayload);
 
-    bot.user.setStatus('online');
-    bot.user.setActivity(`${botCommandPrefix}${botHelpCommand}`, { type: 'LISTENING' });
+    const commands = [
+        new discord.SlashCommandBuilder()
+            .setName('about')
+            .setDescription('View 4EE-FAH\'s source code')
+            .toJSON(),
+        new discord.SlashCommandBuilder()
+            .setName('guildwars')
+            .setDescription('Find out how Guild Wars scoring works')
+            .toJSON(),
+        new discord.SlashCommandBuilder()
+            .setName('honour')
+            .setDescription('Get a list of today\'s honour recipients')
+            .toJSON(),
+        new discord.SlashCommandBuilder()
+            .setName('honourweekly')
+            .setDescription('Get a list of this week\'s honour recipients')
+            .toJSON(),
+        new discord.SlashCommandBuilder()
+            .setName('honourrota')
+            .setDescription('View the current 18 day honour cycle')
+            .toJSON(),
+        new discord.SlashCommandBuilder()
+            .setName('honourtrade')
+            .setDescription('Find out how to boost your honour rank quickly')
+            .toJSON(),
+        new discord.SlashCommandBuilder()
+            .setName('members')
+            .setDescription('Lists the Guild members\' GoW account names')
+            .toJSON(),
+        new discord.SlashCommandBuilder()
+            .setName('taskpoll')
+            .setDescription('Creates a taskpoll to vote for Epic tasks')
+            .toJSON()
+    ];
+
+    // Configure the slash commands
+    const data = await rest.put(
+        discord.Routes.applicationGuildCommands(process.env.CLIENT_ID, process.env.SERVER_ID),
+        { body: commands },
+    );
+
+    bot.user.setPresence({
+        activities: [{ name: `/honour`, type: discord.ActivityType.Listening }],
+        status: 'online',
+    });
 
     console.log(`${botName} is online`);
 });
 
-bot.on('message', async message => {
+bot.on('interactionCreate', async interaction => {
+    var discordUser = interaction.username;
+
+    // Define the reply
+    var data = null;
+    var replies = Array();
+    var reactions = null;
+    var replyToPerson = true;
+    var reactToMessageNumber = null;
+
+    if(interaction.commandName == null) return;
+
+    switch (interaction.commandName) {
+        case `${botAboutCommand}`:
+            if(interaction.channel != null) interaction.channel.sendTyping();
+
+            replies.push(await messages.AboutThisBot());
+            break;
+    
+        case 'guildwars':
+            if(interaction.channel != null) interaction.channel.sendTyping();
+
+            let channelOnGwDefence = await helpers.GetChannelIdAsync(interaction.guild, "on_gw_defence");
+            let channelOnGwOffence = await helpers.GetChannelIdAsync(interaction.guild, "on_gw_offence");        
+
+            replies.push(await messages.ExplainGuldWars(channelOnGwDefence, channelOnGwOffence));
+            break;
+
+        case 'honour':
+            if(interaction.channel != null) interaction.channel.sendTyping();
+        
+            data = await gowApi.GetDailyGuildHonour(jwtToken);
+            if(data == null) {
+                replies.push(messages.BotError());
+                break;
+            }
+
+            replies.push(data.message);
+            reactions = data.reactions;
+            replyToPerson = false;
+
+            if(data.message.includes("Free Honour")) {
+                replies.push(await messages.ExplainHonourTrading());
+                var reactToMessageNumber = 0;
+            }
+
+            break;
+
+        case 'honouradd':
+            if(interaction.channel != null) interaction.channel.sendTyping();
+        
+            data = await gowApi.IncludeGuildMembersInHonourRota(parsedMessage.Arguments, discordUser, jwtToken);
+            if(data == null) {
+                replies.push(messages.BotError());
+                break;
+            }
+
+            replies.push(data.message);
+            break;
+
+        case 'honourremove':
+            if(interaction.channel != null) interaction.channel.sendTyping();
+        
+            data = await gowApi.ExcludeGuildMembersFromHonourRota(parsedMessage.Arguments, discordUser, jwtToken);
+            if(data == null) {
+                replies.push(messages.BotError());
+                break;
+            }
+
+            replies.push(data.message);
+            break;
+
+        case 'honourrota':
+            if(interaction.channel != null) interaction.channel.sendTyping();
+
+            data = await gowApi.GetGuildHonourRota(jwtToken);
+            if(data == null) {
+                replies.push(messages.BotError());
+                break;
+            }
+
+            replies = replies.concat(data.messages);
+            replyToPerson = false;
+            
+            break;
+
+        case 'honourtrade':
+            replies.push(await messages.ExplainHonourTrading());
+            replyToPerson = false;
+
+            break;
+
+        case 'honourweekly':
+            if(interaction.channel != null) interaction.channel.sendTyping();
+            
+            data = await gowApi.GetWeeklyGuildHonour(jwtToken);
+            if(data == null) {
+                replies.push(messages.BotError());
+                break;
+            }
+
+            replies.push(data.message);
+            replyToPerson = false;
+            break;
+
+        case 'members':
+            if(interaction.channel != null) interaction.channel.sendTyping();
+            
+            data = await gowApi.GetGuildMembers(jwtToken);
+            if(data == null) {
+                replies.push(messages.BotError());
+                break;
+            }
+
+            replies.push(data.message);
+            break;
+
+        case 'taskpoll':
+            if(interaction.channel != null) interaction.channel.sendTyping();
+            
+            replies.push(await messages.TaskPoll());
+            reactions = await messages.TaskPollReactions();
+            replyToPerson = false;
+            break;
+    }
+
+    await messages.SendReplies(discord, bot, interaction, replies, reactions, replyToPerson, reactToMessageNumber, true);
+});
+
+bot.on('messageCreate', async message => {
 
     // Limit the bot commands to a particular channel
     //if(message.channel != targetChannelId) return;
@@ -64,15 +250,15 @@ bot.on('message', async message => {
 
     switch (parsedMessage.Command) {
         case `${botCommandPrefix}${botAboutCommand}`:
-            if(message.channel != null) message.channel.startTyping();
+            if(message.channel != null) message.channel.sendTyping();
 
             replies.push(await messages.AboutThisBot());
             break;
     
         case `${botCommandPrefix}guildwars`:
         case `${botCommandPrefix}gw`:
-            if(message.channel != null) message.channel.startTyping();
-            
+            if(message.channel != null) message.channel.sendTyping();
+
             let channelOnGwDefence = await helpers.GetChannelIdAsync(message.guild, "on_gw_defence");
             let channelOnGwOffence = await helpers.GetChannelIdAsync(message.guild, "on_gw_offence");        
 
@@ -80,8 +266,8 @@ bot.on('message', async message => {
             break;
 
         case `${botCommandPrefix}${botHelpCommand}`:
-            if(message.channel != null) message.channel.startTyping();
-                        
+            if(message.channel != null) message.channel.sendTyping();
+            
             botCommands = await messages.ListBotCommands(botAboutCommand, botCommandPrefix);
             //hawxCommands = await gowApi.AboutHawxCommands(botCommandPrefix);
 
@@ -93,7 +279,7 @@ bot.on('message', async message => {
 
         case `${botCommandPrefix}honour`:
         case `${botCommandPrefix}honor`:
-            if(message.channel != null) message.channel.startTyping();
+            if(message.channel != null) message.channel.sendTyping();
         
             data = await gowApi.GetDailyGuildHonour(jwtToken);
             if(data == null) {
@@ -106,9 +292,7 @@ bot.on('message', async message => {
             replyToPerson = false;
 
             if(data.message.includes("Free Honour")) {
-                replies.push("You can trade your free honour on GoW's global channel 989 for an additional boost to your account.");
-                replies.push("To get started, just send a message in the format shown in the image below:");
-                replies.push("http://www.s171553821.websitehome.co.uk/gow/images/honour.jpg");
+                replies.push(await messages.ExplainHonourTrading());
                 var reactToMessageNumber = 0;
             }
 
@@ -116,7 +300,7 @@ bot.on('message', async message => {
 
         case `${botCommandPrefix}honouradd`:
         case `${botCommandPrefix}honoradd`:
-            if(message.channel != null) message.channel.startTyping();
+            if(message.channel != null) message.channel.sendTyping();
         
             data = await gowApi.IncludeGuildMembersInHonourRota(parsedMessage.Arguments, discordUser, jwtToken);
             if(data == null) {
@@ -129,7 +313,7 @@ bot.on('message', async message => {
 
         case `${botCommandPrefix}honourremove`:
         case `${botCommandPrefix}honorremove`:
-            if(message.channel != null) message.channel.startTyping();
+            if(message.channel != null) message.channel.sendTyping();
         
             data = await gowApi.ExcludeGuildMembersFromHonourRota(parsedMessage.Arguments, discordUser, jwtToken);
             if(data == null) {
@@ -142,7 +326,7 @@ bot.on('message', async message => {
 
         case `${botCommandPrefix}honourrota`:
         case `${botCommandPrefix}honorrota`:
-            if(message.channel != null) message.channel.startTyping();
+            if(message.channel != null) message.channel.sendTyping();
 
             data = await gowApi.GetGuildHonourRota(jwtToken);
             if(data == null) {
@@ -156,7 +340,7 @@ bot.on('message', async message => {
 
         case `${botCommandPrefix}honourweekly`:
         case `${botCommandPrefix}honorweekly`:
-            if(message.channel != null) message.channel.startTyping();
+            if(message.channel != null) message.channel.sendTyping();
             
             data = await gowApi.GetWeeklyGuildHonour(jwtToken);
             if(data == null) {
@@ -169,7 +353,7 @@ bot.on('message', async message => {
             break;
 
         case `${botCommandPrefix}members`:
-            if(message.channel != null) message.channel.startTyping();
+            if(message.channel != null) message.channel.sendTyping();
             
             data = await gowApi.GetGuildMembers(jwtToken);
             if(data == null) {
@@ -185,7 +369,7 @@ bot.on('message', async message => {
             // Disabled
             return;
 
-            if(message.channel != null) message.channel.startTyping();
+            if(message.channel != null) message.channel.sendTyping();
             
             data = await gowApi.GetLatestPatchNote();
             if(data == null) {
@@ -202,7 +386,7 @@ bot.on('message', async message => {
             // Disabled
             return;
 
-            if(message.channel != null) message.channel.startTyping();
+            if(message.channel != null) message.channel.sendTyping();
             
             data = await gowApi.GetLatestMajorPatchNote();
             if(data == null) {
@@ -215,7 +399,7 @@ bot.on('message', async message => {
             break;
 
         case `${botCommandPrefix}taskpoll`:
-            if(message.channel != null) message.channel.startTyping();
+            if(message.channel != null) message.channel.sendTyping();
             
             replies.push(await messages.TaskPoll());
             reactions = await messages.TaskPollReactions();
@@ -231,7 +415,7 @@ bot.on('message', async message => {
 
                 // Try to match a command
                 if(hawxCommand.command == parsedMessage.Command){
-                    if(message.channel != null) message.channel.startTyping();
+                    if(message.channel != null) message.channel.sendTyping();
 
                     // Check for help argument
                     if(parsedMessage.Arguments.length > 0 && parsedMessage.Arguments[0].toLowerCase() =="help") {

@@ -23,6 +23,8 @@ module.exports = {
         
         if(guild == null || channelName == null) return "**#" + channelName + "**";
         
-        return await guild.channels.cache.find(channel => channel.name === channelName).toString();
+        let channel = await guild.channels.cache.find(channel => channel.name === channelName);
+
+        return (typeof channel === "undefined" ? "**#" + channelName + "**" : channel.toString());
     }
 }

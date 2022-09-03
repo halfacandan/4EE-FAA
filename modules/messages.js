@@ -78,9 +78,20 @@ module.exports = {
 
         return embeddedMessage;
     },
+    ExplainHonourTrading: async function(){
+        let message = {
+            "content": "You can trade your free honour on GoW's global channel 989 for an additional boost to your account.\n" +
+                       "To get started, just send a message in the format **Hx4** (shown in the image below) where the number is the honour that you wish to distribute.\n" +
+                       "Next, click on the portraits of the users above you and give them a **Helpful** honour.\n" +
+                       "You can skip over the users with gold strips at the top of their portraits as they have already reached maximum honour.\n",
+            "file": "http://www.s171553821.websitehome.co.uk/gow/images/honour.jpg"
+        };
+
+        return message;
+    },
     ListBotCommands: async function(botAboutCommand = "about", botCommandPrefix = "!"){
 
-        commands =   [
+        let commands =   [
             `**${botCommandPrefix}${botAboutCommand}** - Info on how to add new functionality to 4EE-FAH\n`,
             `**${botCommandPrefix}gw** - Explain Guild Wars scoring\n`,
             `**${botCommandPrefix}honour** - Display today's honour recipient\n`,
@@ -88,7 +99,7 @@ module.exports = {
             `**${botCommandPrefix}honourremove** - Remove one or more guild member to the honour rota. Usage ${botCommandPrefix}honourremove John \"Jane Doe\"\n`,
             `**${botCommandPrefix}honourrota** - Displays the current, 18 day honour rota\n`,
             `**${botCommandPrefix}honourweekly** - Displays the current week's honour recipients by day\n`,
-            `**${botCommandPrefix}members** - Lists the Guild members GoW account names\n`,
+            `**${botCommandPrefix}members** - Lists the Guild members' GoW account names\n`,
             //`**${botCommandPrefix}patchnotes** - Gets the latest patch note\n`,
             //`**${botCommandPrefix}patchnotesmajor** - Gets the latest Major patch note and notes for any subsequent Minor patches\n`,
             `**${botCommandPrefix}taskpoll** - Creates a taskpoll for Epic tasks\n`];
@@ -124,7 +135,7 @@ module.exports = {
     },
     ParseEmbeddedMessage: async function(discord, embeddedMessage){
 
-        var attachments = null;
+        var attachment = null;
 
         if(typeof embeddedMessage.embed.type === "undefined" || embeddedMessage.embed.type == null){
             embeddedMessage.embed.type = "rich";
@@ -147,7 +158,7 @@ module.exports = {
                 && typeof embeddedMessage.embed.table !== "undefined" && embeddedMessage.embed.table != null){
 
             // The "text-to-image" npm package causes random crashes on Raspberry Pi 4 so use "text2png"
-            const text2png = require('text2png');
+            const text2png = require('text2png');            
             let imageStream = text2png(embeddedMessage.embed.table, {
                 font: '16px Courier',
                 color: 'white',
@@ -163,24 +174,22 @@ module.exports = {
                 imageName = Math.random().toString(36).replace(/[^a-z]+/ig, '').substr(0,5);
             }
 
-            attachments = Array(new discord.MessageAttachment(imageStream, `${imageName}.png`));
-
-            if(attachments != null){
-                
-                embeddedMessage.files = attachments;                   
+            attachment = new discord.AttachmentBuilder(imageStream, { name: `${imageName}.png`});
+            if(attachment != null){
                 embeddedMessage.embed.image = {
                     "url": `attachment://${imageName}.png`
                 }
             }
         }
 
-        if(attachments == null){
+        if(attachment == null){
             return embeddedMessage;
         } else {
-            return { 
-                embed: embeddedMessage.embed, 
-                files: attachments
+            let message = { 
+                "embeds": [embeddedMessage.embed], 
+                "files": [attachment]
             };
+            return message;
         }
     },
     ReactToMesageAsync: async function (bot, message, reactions){
@@ -191,10 +200,14 @@ module.exports = {
             reactions = Array(reactions);
         }
 
+        var msg = message;
+        if(message.constructor.name != "InteractionResponse"){
+            msg = await message.channel.messages.fetch(message.id);
+        }
+
         for(var i=0; i < reactions.length; i++){
             let emojiCode = await this.GetEmojiCodeAsync(bot, reactions[i]);
             if(emojiCode != null){
-                var msg = await message.channel.messages.fetch(message.id);
                 await msg.react(emojiCode);
             }
         }
@@ -216,7 +229,7 @@ module.exports = {
             return emojiShortcode;
         }
     },
-    SendReplies: async function(discord, bot, userMessage, replies, reactions = null, replyToPerson = false, reactToMessageNumber = null){
+    SendReplies: async function(discord, bot, userMessage, replies, reactions = null, replyToPerson = false, reactToMessageNumber = null, isInteraction = false){
 
         if(replies != null){
 
@@ -229,16 +242,54 @@ module.exports = {
                 if(replyToPerson || userMessage == null || typeof userMessage.channel === "undefined" || userMessage.channel == null){
                     if(typeof replies[i] === "string") {
                         message = "\n" + replies[i];
+                        messages.push(await userMessage.reply(replies[i], { split: true }));
                     } else {
                         message = await this.ParseEmbeddedMessage(discord, replies[i]);
-                    }
-                    messages.push(await userMessage.reply(message));
+                        messages.push(await userMessage.reply({ embeds: [message.embed] }));
+                    }                    
                 } else {
                     if(typeof replies[i] === "string") {
-                        messages.push(await userMessage.channel.send(replies[i], { split: true }));
+                        if(isInteraction){
+                            if(i == 0){
+                                await userMessage.reply(replies[i], { split: true });
+                            } else {
+                                await userMessage.followUp(replies[i], { split: true });
+                            }                            
+                            messages.push(await userMessage.fetchReply());
+                        } else {
+                            messages.push(await userMessage.channel.send(replies[i], { split: true }));
+                        }
                     } else {
-                        message = await this.ParseEmbeddedMessage(discord, replies[i]);
-                        messages.push(await userMessage.channel.send(message));
+                        var messageFormatted;
+                        if(typeof replies[i].embed === "undefined"){
+                            messageFormatted = { 
+                                "content": replies[i].content, 
+                                "embeds": [{
+                                    "image": {
+                                        "url": replies[i].file
+                                    }
+                                }]
+                            };
+                        } else {
+                            message = await this.ParseEmbeddedMessage(discord, replies[i]);
+                            if(message.files != null){
+                                messageFormatted = message;
+                            } else {
+                                messageFormatted = { 
+                                    embeds: [message.embed] 
+                                };
+                            }  
+                        }
+                        if(isInteraction){
+                            if(i == 0){
+                                await userMessage.reply(messageFormatted);
+                            } else {
+                                await userMessage.followUp(messageFormatted);
+                            }
+                            messages.push(await userMessage.fetchReply());
+                        } else {
+                            messages.push(await userMessage.channel.send(messageFormatted));
+                        }
                     }                
                 }
                 
@@ -255,7 +306,5 @@ module.exports = {
                 await this.ReactToMesageAsync(bot, replyMessage, reactions);
             }
         }
-
-        if(userMessage.channel != null) userMessage.channel.stopTyping();
     }
 }
