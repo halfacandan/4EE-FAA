@@ -119,7 +119,7 @@ bot.on('interactionCreate', async interaction => {
             let channelOnGwDefence = await helpers.GetChannelIdAsync(interaction.guild, "on_gw_defence");
             let channelOnGwOffence = await helpers.GetChannelIdAsync(interaction.guild, "on_gw_offence");        
 
-            replies.push(await messages.ExplainGuldWars(channelOnGwDefence, channelOnGwOffence));
+            replies.push(...await messages.ExplainGuldWars(channelOnGwDefence, channelOnGwOffence));
             break;
 
         case 'honour':
@@ -262,7 +262,7 @@ bot.on('messageCreate', async message => {
             let channelOnGwDefence = await helpers.GetChannelIdAsync(message.guild, "on_gw_defence");
             let channelOnGwOffence = await helpers.GetChannelIdAsync(message.guild, "on_gw_offence");        
 
-            replies.push(await messages.ExplainGuldWars(channelOnGwDefence, channelOnGwOffence));
+            replies.push(...await messages.ExplainGuldWars(channelOnGwDefence, channelOnGwOffence));
             break;
 
         case `${botCommandPrefix}${botHelpCommand}`:

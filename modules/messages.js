@@ -76,15 +76,33 @@ module.exports = {
             }
         };
 
-        return embeddedMessage;
+        let anonymousGuardiansInviteLink = "https://discord.gg/49FxcSeEKW";
+        let additionalHelpMessage = `You can also check out the GWS Offence channels and the #defense-ss-only channels on the Anonymous Guardians Server for some team suggestions: ${anonymousGuardiansInviteLink}`
+
+        return [
+            embeddedMessage,
+            additionalHelpMessage
+        ];
     },
     ExplainHonourTrading: async function(){
         let message = {
-            "content": "You can trade your free honour on GoW's global channel 989 for an additional boost to your account.\n" +
-                       "To get started, just send a message in the format **Hx4** (shown in the image below) where the number is the honour that you wish to distribute.\n" +
-                       "Next, click on the portraits of the users above you and give them a **Helpful** honour.\n" +
-                       "You can skip over the users with gold strips at the top of their portraits as they have already reached maximum honour.\n",
-            "file": "http://www.s171553821.websitehome.co.uk/gow/images/honour.jpg"
+            "embed": {
+                "title": ":left_right_arrow:  Honour Trading",
+                "description": `It's possible to trade your spare honour with players outside the guild for an additional boost to your account.${LineBreak}`,
+                "fields": [             
+                    {
+                        "name":  ":star:  How to Trade Honour",
+                        "value": " * Open up Gems of War and join global channel **989**\n" +
+                                 " * Send a message in the format **Hx4** (shown in the image below)\n" +
+                                 " * The number is the honour that you wish to distribute\n" +
+                                 " * Click on the users above you & give them a **Helpful** honour\n" +
+                                 ` * Don't give to users with gold strips at the top of their portraits${LineBreak}`
+                    }
+                ],
+                "image": {
+                    "url": 'http://www.s171553821.websitehome.co.uk/gow/images/honour.jpg'
+                }
+            }
         };
 
         return message;
@@ -239,7 +257,7 @@ module.exports = {
             var messages = [];
 
             for(var i=0; i < replies.length; i++){
-                if(replyToPerson || userMessage == null || typeof userMessage.channel === "undefined" || userMessage.channel == null){
+                if(!isInteraction && (replyToPerson || userMessage == null || typeof userMessage.channel === "undefined" || userMessage.channel == null)){
                     if(typeof replies[i] === "string") {
                         message = "\n" + replies[i];
                         messages.push(await userMessage.reply(replies[i], { split: true }));
