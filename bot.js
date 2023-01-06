@@ -71,6 +71,10 @@ bot.on('ready', async () => {
             .setDescription('Find out how to boost your honour rank quickly')
             .toJSON(),
         new discord.SlashCommandBuilder()
+            .setName('honourrank')
+            .setDescription('Lists the Guild members\' Honour ranks')
+            .toJSON(),
+        new discord.SlashCommandBuilder()
             .setName('members')
             .setDescription('Lists the Guild members\' GoW account names')
             .toJSON(),
@@ -197,6 +201,18 @@ bot.on('interactionCreate', async interaction => {
 
             replies.push(data.message);
             replyToPerson = false;
+            break;
+            
+        case 'honourrank':
+            if(interaction.channel != null) interaction.channel.sendTyping();
+            
+            data = await gowApi.GetGuildMembersHonour(jwtToken);
+            if(data == null) {
+                replies.push(messages.BotError());
+                break;
+            }
+
+            replies.push(data.message);
             break;
 
         case 'members':
