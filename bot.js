@@ -141,6 +141,10 @@ bot.on('interactionCreate', async interaction => {
 
             if(data.message.includes("Free Honour")) {
                 replies.push(await messages.ExplainHonourTrading());
+                var honourRanking = await gowApi.GetGuildMembersHonour(jwtToken, true);
+                if(honourRanking != null) {
+                    replies.push(honourRanking.message);
+                }
                 var reactToMessageNumber = 0;
             }
 
